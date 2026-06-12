@@ -1,6 +1,6 @@
-
 export default function HiddenFolderList({
-  folders
+  folders,
+  onSelect
 }) {
   return (
     <div className="folder-list">
@@ -8,6 +8,9 @@ export default function HiddenFolderList({
         <button
           key={folder.name}
           className="folder-card"
+          onClick={() =>
+            onSelect(folder)
+          }
         >
           📁 {folder.name}
         </button>
