@@ -1,24 +1,46 @@
 import { useState } from "react";
 
 import HiddenFolderList from "./HiddenFolderList";
+import SubfolderList from "./SubfolderList";
 
-import { scanHiddenFolders } from "../utils/fileScanner";
+import {
+  scanHiddenFolders,
+  scanSubfolders
+} from "../utils/fileScanner";
 
 export default function FolderPicker() {
-  const [folders, setFolders] = useState([]);
+  const [hiddenFolders, setHiddenFolders] =
+    useState([]);
+
+  const [subfolders, setSubfolders] =
+    useState([]);
 
   async function handleSelectFolder() {
     try {
       const rootHandle =
         await window.showDirectoryPicker();
 
-      const hiddenFolders =
-        await scanHiddenFolders(rootHandle);
+      const folders =
+        await scanHiddenFolders(
+          rootHandle
+        );
 
-      setFolders(hiddenFolders);
+      setHiddenFolders(folders);
+      setSubfolders([]);
     } catch (error) {
       console.log(error);
     }
+  }
+
+  async function handleOpenFolder(
+    folder
+  ) {
+    const result =
+      await scanSubfolders(
+        folder.handle
+      );
+
+    setSubfolders(result);
   }
 
   return (
@@ -28,16 +50,39 @@ export default function FolderPicker() {
           Mash Media Viewer
         </h1>
 
-        <button
-          className="select-btn"
-          onClick={handleSelectFolder}
-        >
-          Select Folder
-        </button>
+        {hiddenFolders.length ===
+          0 && (
+          <button
+            className="select-btn"
+            onClick={
+              handleSelectFolder
+            }
+          >
+            Select Folder
+          </button>
+        )}
 
-        {folders.length > 0 && (
-          <HiddenFolderList
-            folders={folders}
+        {hiddenFolders.length >
+          0 &&
+          subfolders.length ===
+            0 && (
+            <HiddenFolderList
+              folders={
+                hiddenFolders
+              }
+              onSelect={
+                handleOpenFolder
+              }
+            />
+          )}
+
+        {subfolders.length >
+          0 && (
+          <SubfolderList
+            folders={subfolders}
+            onBack={() =>
+              setSubfolders([])
+            }
           />
         )}
       </div>
