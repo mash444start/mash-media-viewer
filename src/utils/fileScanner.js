@@ -40,3 +40,26 @@ export async function scanSubfolders(folderHandle) {
 
   return folders;
 }
+
+
+export async function scanMediaFiles(folderHandle) {
+  const files = [];
+
+  for await (const [name, handle] of folderHandle.entries()) {
+    if (handle.kind !== "file") continue;
+
+    const lower = name.toLowerCase();
+
+    if (
+      lower.endsWith(".hid") ||
+      lower.endsWith(".dat")
+    ) {
+      files.push({
+        name,
+        handle
+      });
+    }
+  }
+
+  return files;
+}
