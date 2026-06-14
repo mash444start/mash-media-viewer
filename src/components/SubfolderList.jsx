@@ -1,7 +1,20 @@
+import { scanMediaFiles } from "../utils/fileScanner";
+
 export default function SubfolderList({
   folders,
   onBack
 }) {
+  async function handleOpen(folder) {
+    const files =
+      await scanMediaFiles(
+        folder.handle
+      );
+
+    alert(
+      `${folder.name}\n\n${files.length} files found`
+    );
+  }
+
   return (
     <>
       <button
@@ -16,6 +29,9 @@ export default function SubfolderList({
           <button
             key={folder.name}
             className="folder-card"
+            onClick={() =>
+              handleOpen(folder)
+            }
           >
             📂 {folder.name}
           </button>
